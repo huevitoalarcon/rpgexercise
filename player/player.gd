@@ -41,6 +41,8 @@ func movement_loop():
 	var motion =movedir.normalized()*SPEED
 	 
 	#mueve el personaje utilizando el valor de Motion
+	#aun estoy averiguando bien como funciona esa funcion
+	#Sin utilizar Vector2(0,0) sigue funcionando sin problemas
 	move_and_slide(motion, Vector2(0,0))
 	
 	
