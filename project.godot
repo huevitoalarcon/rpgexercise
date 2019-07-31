@@ -16,7 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Zelda like"
-run/main_scene="res://player/player.tscn"
+run/main_scene="res://tiles/test.tscn"
 config/icon="res://icon.png"
 
 [display]

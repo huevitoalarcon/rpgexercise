@@ -1,13 +1,38 @@
 extends KinematicBody2D
 
 #define una velocidad constante para el movimiento
-const SPEED =200
+const SPEED =70
 #define una direccion de movimiento, inicializada en 0,0 para que no se mueva
 var movedir = Vector2(0,0)
+
+#indica la dirección del sprite para seleccionar la animación a utilizar
+var spritedir = "down"
 
 func _physics_process(delta):
 	controls_loop()
 	movement_loop()
+	spritedir_loop()
+	print (spritedir)
+	
+	#checkea si esta en una muralla
+	if is_on_wall():
+	#si detecta una muralla revisa si el personaje esta mirando directo a la muralla
+	#o si solo esta al lado, de este modo evitamos que la animacion se active
+	#y el personaje este en otra direccion
+		if spritedir =="left" and test_move(transform, Vector2(-1,0)):
+			anim_switch("push")
+		if spritedir=="right" and test_move(transform, Vector2(1,0)):
+			anim_switch("push")
+		if spritedir=="up" and test_move(transform, Vector2(0,-1)):
+			anim_switch("push")
+		if spritedir=="down" and test_move(transform, Vector2(0,1)):
+			anim_switch("push")
+	elif movedir != Vector2(0,0):
+		#si se presiona algun boton de direccion reproduce la animacion walk
+		anim_switch("walk")
+	else:
+		#si no se esta apretando nada pasa a estado Idle
+		anim_switch("idle")
 
 
 #define funciones a utilizar
@@ -45,5 +70,24 @@ func movement_loop():
 	#Sin utilizar Vector2(0,0) sigue funcionando sin problemas
 	move_and_slide(motion, Vector2(0,0))
 	
+#spritedir loop cambia la dirección del sprite segun la direccion en la se que este moviendo
+#el personaje	
+func spritedir_loop():
+	match movedir:
+		Vector2(-1,0):
+			spritedir="left"
+		Vector2(1,0): 
+			spritedir="right"
+		Vector2(0,-1):
+			spritedir="up"
+		Vector2(0,1):
+			spritedir="down"
 	
-	
+#cambia la animacion segun spritedir
+func anim_switch(animation):
+	#crea un nombre que se forma uniendo animation y spritedir, es decir
+	#si esta caminando une walk con up (nombre que definimos en el nodo animation player)
+	var newanim= str(animation,spritedir)
+	#si la animacion actual es distinta de "newanim" esta cambiara a la que indica newanim
+	if $anim.current_animation != newanim:
+		$anim.play(newanim)
